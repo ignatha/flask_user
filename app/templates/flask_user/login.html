@@ -1,0 +1,55 @@
+
+{% extends 'template-min.html' %}
+{% from "flask_user/_macros.html" import render_field, render_checkbox_field, render_submit_field %}
+
+{% block content %}
+      <p class="login-box-msg">Sign in to start your session</p>
+      <form action="" method="post">
+      {{ form.hidden_tag() }}
+
+      {# Username or Email field #}
+      {% set field = form.username if user_manager.USER_ENABLE_USERNAME else form.email %}
+      <div class="form-group has-feedback {% if field.errors %}has-error{% endif %}">
+
+        {{ field(class_='form-control',placeholder="Email") }}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+
+      {# Password field #}
+      {% set field = form.password %}
+      <div class="form-group has-feedback {% if field.errors %}has-error{% endif %}">
+        {{ field(class_='form-control',placeholder="Password") }}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+              <input type="checkbox" id="remember_me" name="remember_me" value="y"> Remember Me
+            </label>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+         <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+    <!-- /.social-auth-links -->
+
+    <a href="{{ url_for('user.forgot_password') }}">I forgot my password</a><br>
+    <a href="{{ url_for('user.register') }}" class="text-center">Register a new membership</a>
+
+{% endblock %}

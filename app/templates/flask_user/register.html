@@ -1,0 +1,48 @@
+{% extends 'template-min.html' %}
+
+{% block content %}
+{% from "flask_user/_macros.html" import render_field, render_submit_field %}
+<p class="login-box-msg">Register New Member</p>
+
+<form action="" method="POST" novalidate formnovalidate class="form" role="form">
+    {{ form.hidden_tag() }}
+
+    {# Username or Email #}
+    {% set field = form.username if user_manager.USER_ENABLE_USERNAME else form.email %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+        <label for="{{ field.id }}" class="control-label">{{ field.label.text }}</label>
+        {{ field(class_='form-control',placeholder="Email") }}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+    {% if user_manager.USER_ENABLE_EMAIL and user_manager.USER_ENABLE_USERNAME %}
+        {{ render_field(form.email,placeholder="Email") }}
+    {% endif %}
+
+    {{ render_field(form.password,placeholder="Password") }}
+
+    {% if user_manager.USER_REQUIRE_RETYPE_PASSWORD %}
+        {{ render_field(form.retype_password,placeholder="Confirmation Password") }}
+    {% endif %}
+
+    <div class="row">
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+        </div>
+        <!-- /.col -->
+      </div>
+</form>
+
+<div class="social-auth-links text-center">
+      <p>- OR -</p>
+</div>
+
+<a href="{{ url_for('user.login') }}" class="text-center">I already have a membership</a>
+
+{% endblock %}
