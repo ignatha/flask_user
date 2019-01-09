@@ -1,5 +1,7 @@
 env/
 env/*
 config.py
+*.sqlite
+*.db
 *.pyc
 *.swp

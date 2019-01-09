@@ -1,8 +1,9 @@
 import datetime
-from flask import Flask, request, render_template_string, redirect, url_for, render_template
+from flask import Flask, request, render_template_string, redirect, url_for, render_template, jsonify
 from flask_babelex import Babel
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import current_user, login_required, roles_required, UserManager, UserMixin
+from datatables import ColumnDT, DataTables
 
  
 app = Flask(__name__)
@@ -77,21 +78,32 @@ if not User.query.filter(User.email == 'admin@gmail.com').first():
 def home_page():
     return render_template('home.html')
 
-@app.route('/members')
+@app.route('/user')
+@login_required 
+def user():
+    return render_template('user/user.html')
+
+@app.route('/API/user')
 @login_required
-def member_page():
-    return render_template_string("""
-            {% extends "flask_user_layout.html" %}
-            {% block content %}
-                <h2>{%trans%}Members page{%endtrans%}</h2>
-                <p><a href={{ url_for('user.register') }}>{%trans%}Register{%endtrans%}</a></p>
-                <p><a href={{ url_for('user.login') }}>{%trans%}Sign in{%endtrans%}</a></p>
-                <p><a href={{ url_for('home_page') }}>{%trans%}Home Page{%endtrans%}</a> (accessible to anyone)</p>
-                <p><a href={{ url_for('member_page') }}>{%trans%}Member Page{%endtrans%}</a> (login_required: member@example.com / Password1)</p>
-                <p><a href={{ url_for('admin_page') }}>{%trans%}Admin Page{%endtrans%}</a> (role_required: admin@example.com / Password1')</p>
-                <p><a href={{ url_for('user.logout') }}>{%trans%}Sign out{%endtrans%}</a></p>
-            {% endblock %}
-            """)
+def api_user():
+    """Return server side data."""
+    # defining columns
+    #  - explicitly cast date to string, so string searching the date
+    #    will search a date formatted equal to how it is presented
+    #    in the table
+    columns = [
+        ColumnDT(User.id),
+        ColumnDT(User.first_name),
+        ColumnDT(User.email)
+    ]
+
+    query = db.session.query().select_from(User)
+    rowTable = DataTables(request.args.to_dict(),query, columns)
+
+    response = jsonify(rowTable.output_result())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/admin')
 @roles_required('Admin')
