@@ -10,6 +10,8 @@
         <div class="pull-left info">
           <p>{{ current_user.first_name or current_user.email }}</p>
           
+
+          
         </div>
       </div>
      
@@ -21,46 +23,38 @@
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-user-o"></i> <span>Users</span>
-          </a>
-        </li>
+        {% if current_user.has_roles('Admin') %}
+              <li>
+                <a href="{{ url_for('user') }}">
+                  <i class="fa fa-user-o"></i> <span>Users</span>
+                </a>
+              </li>
+        {% endif %}
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-shopping-cart"></i>
-            <span>Product Menu</span>
+            <i class="fa fa-envelope-open-o"></i>
+            <span>Pengaduan</span>
             <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i> Kategori Produk</a></li>
-            <li><a href="#"><i class="fa fa-circle-o"></i> Produk</a></li>
+            <li><a href="{{ url_for('pengaduan') }}"><i class="fa fa-circle-o"></i> Pengaduan</a></li>
+            <li><a href="{{ url_for('pengaduan_create') }}"><i class="fa fa-circle-o"></i> Buat Pengaduan</a></li>
           </ul>
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-user-circle"></i>
-            <span>Distributor Menu</span>
+            <i class="fa fa-file-text-o"></i>
+            <span>Informasi</span>
             <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i> Kota</a></li>
-            <li><a href="#"><i class="fa fa-circle-o"></i> Distributor</a></li>
+            <li><a href="{{ url_for('informasi') }}"><i class="fa fa-circle-o"></i> Informasi</a></li>
+            <li><a href="{{ url_for('informasi_create') }}"><i class="fa fa-circle-o"></i> Buat Informasi</a></li>
           </ul>
-        </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-tags"></i> <span>Penjualan</span>
-          </a>
-        </li>
-        <li>
-          <a href="{{ url_for('user.logout') }}">
-            <i class="fa fa-sign-out"></i> <span>Logout</span>
-          </a>
         </li>
       </ul>
     </section>

@@ -83,6 +83,7 @@ if not User.query.filter(User.email == 'admin@gmail.com').first():
 
 # Home bisa diakses tanpa login
 @app.route('/')
+@login_required
 def home_page():
     return render_template('home.html')
 
@@ -92,7 +93,43 @@ def home_page():
 @roles_required('Admin')
 def user():
     users = User.query.all()
-    return render_template('user/user.html',users=users)
+    return render_template('user/user.html',users=users,page_title="Users",page_description="List Of Table User")
+
+# Halaman tabel pengaduan
+@app.route('/pengaduan/')
+@login_required
+def pengaduan():
+    return render_template('pengaduan/pengaduan.html',page_title="Pengaduan",page_description="Daftar Pengaduan")
+
+# Halaman buat pengaduan
+@app.route('/pengaduan/create')
+@login_required
+def pengaduan_create():
+    return render_template('pengaduan/create.html',page_title="Buat Pengaduan",page_description="Buat Pengaduan")
+
+# Halaman detail pengaduan
+@app.route('/detail/pengaduan/')
+@login_required
+def detail_pengaduan():
+    return render_template('pengaduan/detail.html',page_title="Detail Pengaduan",page_description="Detail pengaduan")
+
+# Halaman buat informasi
+@app.route('/informasi/create')
+@login_required
+def informasi_create():
+    return render_template('informasi/create.html',page_title="Buat informasi",page_description="Buat informasi")
+
+# Halaman buat informasi
+@app.route('/informasi/show')
+@login_required
+def informasi_show():
+    return render_template('informasi/show.html',page_title="Lihat informasi",page_description="Lihat informasi")
+
+# Halaman tabel informasi
+@app.route('/informasi/')
+@login_required
+def informasi():
+    return render_template('informasi/informasi.html',page_title="Informasi",page_description="Daftar Informasi")
 
 # Halaman user dengan itsdangerous (HANYA ADMIN)
 @app.route('/user/detail/<user_id>')
@@ -100,9 +137,10 @@ def user():
 @roles_required('Admin')
 def user_detail(user_id):
     user_id = danger.loads(user_id)
-    return str(user_id)
+    user = User.query.get(user_id)
+    return render_template('user/profile.html',user=user)
 
-# Perobcaan serverside DataTables
+# Perobcaan API serverside DataTables
 @app.route('/API/user')
 @login_required
 def api_user():
@@ -125,24 +163,3 @@ def api_user():
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
-
-
-@app.route('/admin')
-@roles_required('Admin')
-def admin_page():
-    return render_template_string("""
-            {% extends "flask_user_layout.html" %}
-            {% block content %}
-                <h2>{%trans%}Admin Page{%endtrans%}</h2>
-                <p><a href={{ url_for('user.register') }}>{%trans%}Register{%endtrans%}</a></p>
-                <p><a href={{ url_for('user.login') }}>{%trans%}Sign in{%endtrans%}</a></p>
-                <p><a href={{ url_for('home_page') }}>{%trans%}Home Page{%endtrans%}</a> (accessible to anyone)</p>
-                <p><a href={{ url_for('member_page') }}>{%trans%}Member Page{%endtrans%}</a> (login_required: member@example.com / Password1)</p>
-                <p><a href={{ url_for('admin_page') }}>{%trans%}Admin Page{%endtrans%}</a> (role_required: admin@example.com / Password1')</p>
-                <p><a href={{ url_for('user.logout') }}>{%trans%}Sign out{%endtrans%}</a></p>
-            {% endblock %}
-            """)
-
-@app.route('/login')
-def login_page():
-    return render_template('login.html')

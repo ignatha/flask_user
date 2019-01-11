@@ -35,24 +35,24 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="user" class="table table-bordered table-striped">
+                    <table id="pengaduan" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                          <th>Email</th>
-                          <th>First Name</th>
-                          <th>Last Name</th>
-                          <th>Hak Akses</th>
+                          <th>Tanggal Publish</th>
+                          <th>Judul</th>
+                          <th>Kategori</th>
+                          <th>Isi</th>
                           <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for x in range(20) %}
                                 <tr>
-                                  <td>{{ user.email }}</td>    
-                                  <td>{{ user.first_name }}</td>
-                                  <td>{{ user.last_name }}</td>
-                                  <td>{% for role in user.roles %}{{role.name}}{% endfor %}</td>
-                                  <td><a href="{{ url_for('user_detail',user_id=user.danger) }}" class="btn btn-danger btn-sm">hapus</a></td>
+                                  <td>10 Januari 2019</td>    
+                                  <td>Berita peristiwa dan politik terbaru di Indonesia dan luar negeri</td>
+                                  <td>Internasional</td>
+                                  <td>Ulasan berita hari ini dari peristiwa, kecelakaan, kriminal, hukum, berita unik, Politik, dan liputan khusus di Indonesia dan Internasional.</td>
+                                  <td><a href="#" class="btn btn-danger btn-small">hapus</a> <a href="{{ url_for('informasi_show') }}" class="btn btn-success btn-small">lihat</a> <a href="#" class="btn btn-warning btn-small">edit</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -74,36 +74,9 @@
     <script src="http://jurnal.lapakunique.com/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
     <script type="text/javascript">
-        // $(document).ready(function() {
-        //     var table = $('#user').DataTable( { 
-        //         "processing": true,
-        //         "serverSide": true, 
-        //         "ajax": "{{ url_for('api_user',select='all') }}",
-        //         "order": [1, 'asc'],
-        //         /* render name column strings as links */
-        //         "columnDefs": [{
-        //             "targets": 5,
-        //             "render": function (data, type, row, meta) {
-        //                 return "<a href='{{ url_for('user') }}" + data[5] + "/' class='btn btn-sm btn-danger'>Hapus</a>";
-        //             }
-        //         },
-        //         {
-        //             "searchable": false,
-        //             "orderable": false,
-        //             "targets": 0
-        //         }
-        //         ]
-        //     });
-
-        //     table.on( 'order.dt search.dt', function () {
-        //         table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-        //             cell.innerHTML = i+1;
-        //         } );
-        //     } ).draw();
-        // });
 
         $(document).ready(function() {
-            var table = $('#user').DataTable();
+            var table = $('#pengaduan').DataTable();
         });
     </script>
 
