@@ -1,9 +1,11 @@
 {% extends "template.html" %}
 
-{% block head %}{% endblock %}
+{% block head %}
 
  <!-- DataTables -->
   <link rel="stylesheet" href="http://jurnal.lapakunique.com/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+{% endblock %}
 
 {% block content %}
     <div class='row'>
@@ -32,23 +34,29 @@
                         <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
-                <div class="box-body">
+                <div class="box-body table-responsive">
                     <table id="user" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                          <th></th>
-                          <th>No</th>
-                          <th>Kode Woocommerce</th>
+                          <th>Email</th>
+                          <th>First Name</th>
+                          <th>Last Name</th>
+                          <th>Hak Akses</th>
+                          <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         </tbody>
                         <tfoot>
+                        {% for user in users %}
                         <tr>
-                          <th></th>    
-                          <th></th>
-                          <th></th>
+                          <td>{{ user.email }}</td>    
+                          <td>{{ user.first_name }}</td>
+                          <td>{{ user.last_name }}</td>
+                          <td>{% for role in user.roles %}{{role.name}}{% endfor %}</td>
+                          <td><a href="{{ url_for('user_detail',user_id=user.danger) }}" class="btn btn-danger btn-sm">hapus</a></td>
                         </tr>
+                        {% endfor %}
                         </tfoot>
                       </table> 
                 </div><!-- /.box-body -->
@@ -68,13 +76,33 @@
     <script src="http://jurnal.lapakunique.com/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-        $('#user').DataTable( { 
-            "processing": true,
-            "serverSide": true, 
-            "ajax": "{{ url_for('api_user') }}"
-            });
-        } );
+        // $(document).ready(function() {
+        //     var table = $('#user').DataTable( { 
+        //         "processing": true,
+        //         "serverSide": true, 
+        //         "ajax": "{{ url_for('api_user',select='all') }}",
+        //         "order": [1, 'asc'],
+        //         /* render name column strings as links */
+        //         "columnDefs": [{
+        //             "targets": 5,
+        //             "render": function (data, type, row, meta) {
+        //                 return "<a href='{{ url_for('user') }}" + data[5] + "/' class='btn btn-sm btn-danger'>Hapus</a>";
+        //             }
+        //         },
+        //         {
+        //             "searchable": false,
+        //             "orderable": false,
+        //             "targets": 0
+        //         }
+        //         ]
+        //     });
+
+        //     table.on( 'order.dt search.dt', function () {
+        //         table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+        //             cell.innerHTML = i+1;
+        //         } );
+        //     } ).draw();
+        // });
     </script>
 
 

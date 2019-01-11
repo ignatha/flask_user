@@ -2,12 +2,16 @@ import datetime
 from flask import Flask, request, render_template_string, redirect, url_for, render_template, jsonify
 from flask_babelex import Babel
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import literal_column
 from flask_user import current_user, login_required, roles_required, UserManager, UserMixin
 from datatables import ColumnDT, DataTables
+from itsdangerous import URLSafeSerializer
+from sqlalchemy.ext.hybrid import hybrid_property
 
  
 app = Flask(__name__)
 app.config.from_object('config')
+danger = URLSafeSerializer(app.config['SECRET_KEY'])
 
 
 babel = Babel(app)
@@ -28,6 +32,11 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(100), nullable=False, server_default='')
 
     roles = db.relationship('Role', secondary='user_roles')
+
+    # mehod itsdangerous
+    @hybrid_property
+    def danger(self):
+        return danger.dumps(self.id)
 
 # Model Role
 class Role(db.Model):
@@ -72,38 +81,51 @@ if not User.query.filter(User.email == 'admin@gmail.com').first():
     db.session.commit()
 
 
-# The Home page is accessible to anyone
+# Home bisa diakses tanpa login
 @app.route('/')
-@login_required 
 def home_page():
     return render_template('home.html')
 
-@app.route('/user')
-@login_required 
+# Halaman user (HANYA ADMIN)
+@app.route('/user/')
+@login_required
+@roles_required('Admin')
 def user():
-    return render_template('user/user.html')
+    users = User.query.all()
+    return render_template('user/user.html',users=users)
 
+# Halaman user dengan itsdangerous (HANYA ADMIN)
+@app.route('/user/detail/<user_id>')
+@login_required
+@roles_required('Admin')
+def user_detail(user_id):
+    user_id = danger.loads(user_id)
+    return str(user_id)
+
+# Perobcaan serverside DataTables
 @app.route('/API/user')
 @login_required
 def api_user():
-    """Return server side data."""
-    # defining columns
-    #  - explicitly cast date to string, so string searching the date
-    #    will search a date formatted equal to how it is presented
-    #    in the table
+
     columns = [
-        ColumnDT(User.id),
         ColumnDT(User.first_name),
-        ColumnDT(User.email)
+        ColumnDT(User.last_name),
+        ColumnDT(User.email),
+        ColumnDT(Role.name),
+        ColumnDT(User.danger,public_order=False),
     ]
 
-    query = db.session.query().select_from(User)
+    query = db.session.query()\
+                .select_from(User)\
+                .outerjoin(User.roles)\
+
     rowTable = DataTables(request.args.to_dict(),query, columns)
 
     response = jsonify(rowTable.output_result())
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
+
 
 @app.route('/admin')
 @roles_required('Admin')
