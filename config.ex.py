@@ -4,25 +4,28 @@ ENV = 'development'
 DEBUG = True
 
 # Flask-SQLAlchemy settings
+# menggunakan SQLITE : sqlite:///app.db
+# menggunakan MYSQL : 'mysql+pymysql://user:password@localhost/database'
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://user:password@localhost/database'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_ECHO = True
 
-# Flask-Mail SMTP server settings
-MAIL_SERVER = 
+# PENTING
+# Harap lengkapi konfigurasi smtp untuk mengaktifkan fitur konfirmasi email
+MAIL_SERVER = #host smtp
 MAIL_PORT = 465
 MAIL_USE_SSL = True
 MAIL_USE_TLS = False
-MAIL_USERNAME = 
-MAIL_PASSWORD = 
-MAIL_DEFAULT_SENDER = 
+MAIL_USERNAME = #username
+MAIL_PASSWORD = #password
+MAIL_DEFAULT_SENDER = #alamat pengirim
 
 # Flask-User settings
-USER_APP_NAME = "My App" # Shown in and email templates and page footers
-USER_ENABLE_EMAIL = True        # Enable email authentication
-USER_ENABLE_USERNAME = False    # Disable username authentication
+USER_APP_NAME = "My App"
+USER_ENABLE_EMAIL = True
+USER_ENABLE_USERNAME = False
 USER_EMAIL_SENDER_NAME = USER_APP_NAME
 USER_EMAIL_SENDER_EMAIL = "admin@yourapp.com"
 
-#Default Admin Password
-ADMIN_PASSWORD = "secret"
+#Default Admin
+ADMIN_EMAIL = "secret" #Email admin default
+ADMIN_PASSWORD = "secret" #password admin default

@@ -52,7 +52,11 @@
                                   <td>{{ user.first_name }}</td>
                                   <td>{{ user.last_name }}</td>
                                   <td>{% for role in user.roles %}{{role.name}}{% endfor %}</td>
-                                  <td><a href="{{ url_for('user_detail',user_id=user.danger) }}" class="btn btn-danger btn-sm">hapus</a></td>
+                                  <td>
+                                  {% if current_user.has_roles('Admin') %}
+                                  <a href="{{ url_for('user_detail',user_id=user.danger) }}" class="btn btn-danger btn-sm">hapus</a>
+                                  {% endif %}
+                                  </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

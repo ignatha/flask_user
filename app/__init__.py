@@ -71,9 +71,9 @@ user_manager = CustomUserManager(app, db, User)
 db.create_all()
 
 # Membuat user admin default
-if not User.query.filter(User.email == 'admin@gmail.com').first():
+if not User.query.filter(User.email == app.config['ADMIN_EMAIL']).first():
     user = User(
-        email='admin@gmail.com',
+        email=app.config['ADMIN_PASSWORD'],
         email_confirmed_at=datetime.datetime.utcnow(),
         password=user_manager.hash_password(app.config['ADMIN_PASSWORD']),
     )
@@ -91,46 +91,9 @@ def home_page():
 # Halaman user (HANYA ADMIN)
 @app.route('/user/')
 @login_required
-@roles_required('Admin')
 def user():
     users = User.query.all()
     return render_template('user/user.html',users=users,page_title="Users",page_description="List Of Table User")
-
-# Halaman tabel pengaduan
-@app.route('/pengaduan/')
-@login_required
-def pengaduan():
-    return render_template('pengaduan/pengaduan.html',page_title="Pengaduan",page_description="Daftar Pengaduan")
-
-# Halaman buat pengaduan
-@app.route('/pengaduan/create')
-@login_required
-def pengaduan_create():
-    return render_template('pengaduan/create.html',page_title="Buat Pengaduan",page_description="Buat Pengaduan")
-
-# Halaman detail pengaduan
-@app.route('/detail/pengaduan/')
-@login_required
-def detail_pengaduan():
-    return render_template('pengaduan/detail.html',page_title="Detail Pengaduan",page_description="Detail pengaduan")
-
-# Halaman buat informasi
-@app.route('/informasi/create')
-@login_required
-def informasi_create():
-    return render_template('informasi/create.html',page_title="Buat informasi",page_description="Buat informasi")
-
-# Halaman buat informasi
-@app.route('/informasi/show')
-@login_required
-def informasi_show():
-    return render_template('informasi/show.html',page_title="Lihat informasi",page_description="Lihat informasi")
-
-# Halaman tabel informasi
-@app.route('/informasi/')
-@login_required
-def informasi():
-    return render_template('informasi/informasi.html',page_title="Informasi",page_description="Daftar Informasi")
 
 # Halaman user dengan itsdangerous (HANYA ADMIN)
 @app.route('/user/detail/<user_id>')
@@ -145,7 +108,7 @@ def user_detail(user_id):
 @login_required
 def gambar():
     if request.method == 'GET':
-        return render_template('gambar/index.html')
+        return render_template('gambar/index.html',page_title="Konversi Gambar",page_description="Konversi file gambar ke Base64 String")
     if request.method == 'POST':
         image = request.files['gambar']
         image_string = base64.b64encode(image.read())
