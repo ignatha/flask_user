@@ -1,0 +1,66 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class='row'>
+
+        <div class='col-md-12'>
+            <!-- Box -->
+            <div class="box box-primary">
+            	<form id="formGambar">
+                <div class="box-header with-border">
+                	<h3>Konversi Gambar ke Base64</h3>
+                </div>
+                <div class="box-body">
+                	<div class="form-group col-md-6">
+                     <label for="gambar">Gambar</label>
+                     <input type="file" id="gambar" class="form-control" name="gambar">
+                  </div>
+                </div><!-- /.box-body -->
+                <div class="box-footer">
+                	<div class="form-group col-md-12">
+                		<input type="submit" class="btn btn-defult" name="submit">
+                	</div>
+                </div><!-- /.box-body -->
+                </form>
+            </div><!-- /.box -->
+             <!-- Box -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3>Hasil</h3>
+                </div>
+                <div class="box-body">
+                  <div class="form-group col-md-12">
+                     <textarea style="height: 200px;" class="form-control" id="hasil"></textarea>
+                  </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+
+    </div><!-- /.row -->
+{% endblock %}
+
+{% block footer %}
+
+<script type="text/javascript">
+    $(document).on('submit', '#formGambar', function(e){
+          e.preventDefault();
+
+          var form_data = new FormData($('#formGambar')[0]);
+          $.ajax({
+              type:'POST',
+              url:'{{ url_for('gambar') }}',
+              processData: false,
+              contentType: false,
+              async: false,
+              cache: false,
+              data : form_data,
+              success: function(response){
+                $('#hasil').val(response.data);
+              }
+          });
+        });
+</script>
+
+
+
+{% endblock %}

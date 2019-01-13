@@ -7,6 +7,7 @@ from flask_user import current_user, login_required, roles_required, UserManager
 from datatables import ColumnDT, DataTables
 from itsdangerous import URLSafeSerializer
 from sqlalchemy.ext.hybrid import hybrid_property
+import base64
 
  
 app = Flask(__name__)
@@ -134,11 +135,24 @@ def informasi():
 # Halaman user dengan itsdangerous (HANYA ADMIN)
 @app.route('/user/detail/<user_id>')
 @login_required
-@roles_required('Admin')
 def user_detail(user_id):
     user_id = danger.loads(user_id)
     user = User.query.get(user_id)
     return render_template('user/profile.html',user=user)
+
+
+@app.route('/gambar/',methods=['GET','POST'])
+@login_required
+def gambar():
+    if request.method == 'GET':
+        return render_template('gambar/index.html')
+    if request.method == 'POST':
+        image = request.files['gambar']
+        image_string = base64.b64encode(image.read())
+        data = {}
+        data['data'] = image_string
+        return jsonify(data)
+
 
 # Perobcaan API serverside DataTables
 @app.route('/API/user')
